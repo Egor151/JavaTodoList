@@ -3,10 +3,12 @@ package controller;
 import exception.InvalidDateException;
 import exception.InvalidStatusException;
 import exception.TaskNotFoundException;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import model.Status;
 import model.Task;
 import service.TaskService;
+import model.Command;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -26,49 +28,37 @@ public class TaskController {
 
         while (true) {
             System.out.print("\nВведите команду: ");
-            String command = scanner.nextLine().trim().toLowerCase();
+            String input = scanner.nextLine().trim();
 
-            switch (command) {
-                case "add":
-                    addTask();
-                    break;
-                case "list":
-                    listTasks();
-                    break;
-                case "edit":
-                    editTask();
-                    break;
-                case "delete":
-                    deleteTask();
-                    break;
-                case "filter":
-                    filterTasks();
-                    break;
-                case "sort":
-                    sortTasks();
-                    break;
-                case "help":
-                    printHelp();
-                    break;
-                case "exit":
-                    System.out.println("Выход из приложения...");
-                    return;
-                default:
-                    System.out.println("Неизвестная команда. Введите 'help' для списка команд.");
+            Command command = Command.fromString(input);
+            if(command != null) {
+                executeCommand(command);
+            } else {
+                System.out.println("Неизвестная команда. Введите 'help' для списка команд.");
+            }
+        }
+    }
+
+    private void executeCommand(@NonNull Command command) {
+        switch (command) {
+            case ADD-> addTask();
+            case LIST ->  listTasks();
+            case EDIT -> editTask();
+            case DELETE -> deleteTask();
+            case FILTER ->  filterTasks();
+            case SORT ->  sortTasks();
+            case HELP -> printHelp();
+            case EXIT -> { System.out.println("Выход из приложения...");
+                System.exit(0);
             }
         }
     }
 
     private void printHelp() {
         System.out.println("\nДоступные команды:");
-        System.out.println("add    - Добавить новую задачу");
-        System.out.println("list   - Показать все задачи");
-        System.out.println("edit   - Редактировать существующую задачу");
-        System.out.println("delete - Удалить задачу");
-        System.out.println("filter - Показать задачи с определённым статусом");
-        System.out.println("sort   - Отсортировать задачи");
-        System.out.println("help   - Показать справку");
-        System.out.println("exit   - Завершить работу приложения");
+        for (Command cmd : Command.values()) {
+            System.out.printf("%-6s - %s%n", cmd.getCommand(), cmd.getDescription());
+        }
     }
 
     private void addTask() {
