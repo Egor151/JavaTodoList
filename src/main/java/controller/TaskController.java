@@ -31,7 +31,7 @@ public class TaskController {
             String input = scanner.nextLine().trim();
 
             Command command = Command.fromString(input);
-            if(command != null) {
+            if (command != null) {
                 executeCommand(command);
             } else {
                 System.out.println("Неизвестная команда. Введите 'help' для списка команд.");
@@ -41,14 +41,15 @@ public class TaskController {
 
     private void executeCommand(@NonNull Command command) {
         switch (command) {
-            case ADD-> addTask();
-            case LIST ->  listTasks();
+            case ADD -> addTask();
+            case LIST -> listTasks();
             case EDIT -> editTask();
             case DELETE -> deleteTask();
-            case FILTER ->  filterTasks();
-            case SORT ->  sortTasks();
+            case FILTER -> filterTasks();
+            case SORT -> sortTasks();
             case HELP -> printHelp();
-            case EXIT -> { System.out.println("Выход из приложения...");
+            case EXIT -> {
+                System.out.println("Выход из приложения...");
                 System.exit(0);
             }
         }
@@ -87,7 +88,7 @@ public class TaskController {
             try {
                 return LocalDate.parse(dateInput, dateFormatter);
             } catch (DateTimeParseException e) {
-                throw new InvalidDateException("Неверный формат даты: " + dateInput +
+                System.out.println("Неверный формат даты: " + dateInput +
                         ". Ожидается формат дд.мм.гггг. Попробуйте снова.");
             }
         }
@@ -128,11 +129,7 @@ public class TaskController {
             System.out.print("Введите новый статус (TODO, IN_PROGRESS, DONE или оставьте пустым): ");
             String statusInput = scanner.nextLine();
             if (!statusInput.isEmpty()) {
-                try {
-                    status = Status.valueOf(statusInput.toUpperCase());
-                } catch (IllegalArgumentException e) {
-                    throw new InvalidStatusException(statusInput);
-                }
+                status = Status.valueOf(statusInput.toUpperCase());
             }
 
             Task updatedTask = service.updateTask(id,
